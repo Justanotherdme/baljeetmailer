@@ -1,0 +1,105 @@
+--yes only this script will be opensourced of this project. dont expect mutch. coen and baljeet(also me) on top
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Create Blur Effect
+local blurEffect = Instance.new("BlurEffect")
+blurEffect.Size = blurAmount
+blurEffect.Parent = game:GetService("Lighting")
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.IgnoreGuiInset = true
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+screenGui.Parent = playerGui
+
+-- Create Background
+local background = Instance.new("Frame")
+background.Size = UDim2.new(1, 0, 1, 0)
+background.BackgroundTransparency = 0.3
+background.BackgroundColor3 = Color3.new(0, 0, 0)
+background.BorderSizePixel = 0
+background.ZIndex = 9999
+background.Parent = screenGui
+
+-- Create Spinning Image
+local loadingImage = Instance.new("ImageLabel")
+loadingImage.Size = UDim2.new(0, 100, 0, 100)
+loadingImage.Position = UDim2.new(0.5, -50, 0.5, -50)
+loadingImage.BackgroundTransparency = 1
+loadingImage.Image = "rbxassetid://17021132616" -- Replace with your image ID
+loadingImage.ZIndex = 9999
+loadingImage.Parent = screenGui
+
+-- Spin Animation
+coroutine.wrap(function()
+	while true do
+		TweenService:Create(loadingImage, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {Rotation = loadingImage.Rotation + 360}):Play()
+		task.wait(1)
+	end
+end)()
+
+-- Create Tip Text
+local tipTextLabel = Instance.new("TextLabel")
+tipTextLabel.Size = UDim2.new(0.8, 0, 0.1, 0)
+tipTextLabel.Position = UDim2.new(0.1, 0, 0.7, 0)
+tipTextLabel.BackgroundTransparency = 1
+tipTextLabel.TextScaled = true
+tipTextLabel.Font = Enum.Font.SourceSansBold
+tipTextLabel.TextColor3 = Color3.new(1, 1, 1)
+tipTextLabel.ZIndex = 9999
+tipTextLabel.Text = ""
+tipTextLabel.Parent = screenGui
+
+-- Create Percentage Counter
+local percentageLabel = Instance.new("TextLabel")
+percentageLabel.Size = UDim2.new(0.2, 0, 0.1, 0)
+percentageLabel.Position = UDim2.new(0.4, 0, 0.6, 0)
+percentageLabel.BackgroundTransparency = 1
+percentageLabel.TextScaled = true
+percentageLabel.Font = Enum.Font.SourceSansBold
+percentageLabel.TextColor3 = Color3.new(1, 1, 1)
+percentageLabel.ZIndex = 9999
+percentageLabel.Text = "0%"
+percentageLabel.Parent = screenGui
+
+-- Handle Tip Text Typing and Removing
+coroutine.wrap(function()
+	local tipCycles = #tipTexts
+	local timePerCycle = loadingTime / tipCycles -- Total time per tip (typing + showing + removing)
+	local typingTime = timePerCycle / 5 -- Typing takes 1/5 of the cycle
+	local removingTime = timePerCycle / 5 -- Removing takes 1/5 of the cycle
+	local showingTime = timePerCycle - (typingTime + removingTime) -- Remaining time for showing the tip
+
+	for _, tip in ipairs(tipTexts) do
+		-- Typing effect
+		for i = 1, #tip do
+			tipTextLabel.Text = tip:sub(1, i)
+			task.wait(typingTime / #tip)
+		end
+		-- Show tip
+		task.wait(showingTime)
+		-- Removing effect
+		for i = #tip, 1, -1 do
+			tipTextLabel.Text = tip:sub(1, i)
+			task.wait(removingTime / #tip)
+		end
+	end
+end)()
+
+-- Handle Percentage Counter
+coroutine.wrap(function()
+	for i = 1, 100 do
+		percentageLabel.Text = i .. "%"
+		task.wait(loadingTime / 100)
+	end
+end)()
+
+-- Remove UI After Loading
+coroutine.wrap(function()
+	task.wait(loadingTime)
+	blurEffect:Destroy()
+	screenGui:Destroy()
+end)()
