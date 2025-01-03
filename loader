@@ -3,6 +3,13 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+local character = player.Character or player.CharacterAdded:Wait()
+
+-- zoom in so player wont see their pets behind them
+local camera = workspace.CurrentCamera
+camera.CameraType = Enum.CameraType.Attach
+camera.CameraSubject = character:WaitForChild("Humanoid")
+player.CameraMode = Enum.CameraMode.LockFirstPerson
 
 -- Create Blur Effect
 local blurEffect = Instance.new("BlurEffect")
