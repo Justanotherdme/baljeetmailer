@@ -22,6 +22,7 @@ screenGui.IgnoreGuiInset = true
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
+screenGui.DisplayOrder = 100
 
 -- Create Input Blocker
 local inputBlocker = Instance.new("Frame")
@@ -47,7 +48,7 @@ loadingImage.Position = UDim2.new(0.5, 0, 0.5, 0) -- Centered
 loadingImage.AnchorPoint = Vector2.new(0.5, 0.5) -- Center the pivot
 loadingImage.BackgroundTransparency = 1
 loadingImage.Image = "rbxassetid://17021132616" -- Replace with your image ID
-loadingImage.ZIndex = 9999
+loadingImage.ZIndex = 99999
 loadingImage.ScaleType = Enum.ScaleType.Fit -- Ensures the image fits properly
 loadingImage.Parent = screenGui
 
